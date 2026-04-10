@@ -1,0 +1,37 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Countdown from "../../components/Countdown.astro";
+import { useTranslations, getLocalizedPath } from "../../i18n/utils";
+
+const t = useTranslations("en");
+---
+
+<Layout>
+  <!-- Hero -->
+  <section class="relative flex flex-col items-center justify-center text-center px-4 py-24 sm:py-36 bg-cream">
+    <p class="text-sm uppercase tracking-[0.3em] text-bronze-light mb-4">{t("home.subtitle")}</p>
+    <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl text-charcoal mb-4">
+      Tea <span class="text-bronze">&</span> Mak
+    </h1>
+    <div class="w-24 h-px bg-bronze my-6"></div>
+    <p class="font-serif text-xl sm:text-2xl text-charcoal-light">{t("home.date")}</p>
+  </section>
+
+  <!-- Countdown -->
+  <section class="py-12 bg-ivory">
+    <Countdown />
+  </section>
+
+  <!-- Invitation text -->
+  <section class="max-w-2xl mx-auto px-4 py-16 text-center">
+    <p class="text-lg sm:text-xl text-charcoal-light leading-relaxed">
+      {t("home.invite")}
+    </p>
+    <a
+      href={getLocalizedPath("rsvp", "en")}
+      class="inline-block mt-8 px-8 py-3 bg-bronze text-white rounded-md hover:bg-bronze-light transition-colors font-medium tracking-wide"
+    >
+      {t("home.cta")}
+    </a>
+  </section>
+</Layout>

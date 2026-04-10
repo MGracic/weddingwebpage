@@ -1,0 +1,18 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<footer class="bg-cream border-t border-warm py-8 mt-16">
+  <div class="max-w-5xl mx-auto px-4 text-center">
+    <p class="font-serif text-2xl text-bronze mb-2">Tea & Mak</p>
+    <p class="text-sm text-charcoal-light">
+      {t("footer.made-with")} ♥ {t("footer.for")}
+    </p>
+    <p class="text-xs text-charcoal-light/50 mt-4">
+      © 2026
+    </p>
+  </div>
+</footer>

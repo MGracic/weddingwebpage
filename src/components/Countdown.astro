@@ -1,0 +1,59 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div id="countdown" class="flex justify-center gap-4 sm:gap-8 py-8">
+  <div class="text-center">
+    <span class="block font-serif text-3xl sm:text-5xl text-bronze" id="cd-days">--</span>
+    <span class="text-xs sm:text-sm uppercase tracking-widest text-charcoal-light mt-1">{t("countdown.days")}</span>
+  </div>
+  <div class="text-center">
+    <span class="block font-serif text-3xl sm:text-5xl text-bronze" id="cd-hours">--</span>
+    <span class="text-xs sm:text-sm uppercase tracking-widest text-charcoal-light mt-1">{t("countdown.hours")}</span>
+  </div>
+  <div class="text-center">
+    <span class="block font-serif text-3xl sm:text-5xl text-bronze" id="cd-minutes">--</span>
+    <span class="text-xs sm:text-sm uppercase tracking-widest text-charcoal-light mt-1">{t("countdown.minutes")}</span>
+  </div>
+  <div class="text-center">
+    <span class="block font-serif text-3xl sm:text-5xl text-bronze" id="cd-seconds">--</span>
+    <span class="text-xs sm:text-sm uppercase tracking-widest text-charcoal-light mt-1">{t("countdown.seconds")}</span>
+  </div>
+</div>
+
+<script>
+  const weddingDate = new Date("2026-05-30T16:00:00").getTime();
+
+  function update() {
+    const now = Date.now();
+    const diff = weddingDate - now;
+
+    if (diff <= 0) {
+      document.querySelectorAll("#countdown span[id]").forEach((el) => {
+        el.textContent = "0";
+      });
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const daysEl = document.getElementById("cd-days");
+    const hoursEl = document.getElementById("cd-hours");
+    const minutesEl = document.getElementById("cd-minutes");
+    const secondsEl = document.getElementById("cd-seconds");
+
+    if (daysEl) daysEl.textContent = String(days);
+    if (hoursEl) hoursEl.textContent = String(hours);
+    if (minutesEl) minutesEl.textContent = String(minutes);
+    if (secondsEl) secondsEl.textContent = String(seconds);
+  }
+
+  update();
+  setInterval(update, 1000);
+</script>

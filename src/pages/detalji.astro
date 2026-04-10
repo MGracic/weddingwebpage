@@ -1,0 +1,33 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations("hr");
+---
+
+<Layout title={`${t("details.title")} — Tea i Mak`}>
+  <section class="max-w-3xl mx-auto px-4 py-24">
+    <h1 class="font-serif text-4xl sm:text-5xl text-charcoal mb-4 text-center">{t("details.title")}</h1>
+    <div class="w-16 h-px bg-bronze mx-auto mb-12"></div>
+
+    <div class="grid sm:grid-cols-2 gap-8">
+      <!-- When -->
+      <div class="bg-cream rounded-lg p-8 text-center">
+        <h2 class="font-serif text-2xl text-bronze mb-3">{t("details.when")}</h2>
+        <p class="text-charcoal text-lg">{t("details.date")}</p>
+      </div>
+
+      <!-- Where -->
+      <div class="bg-cream rounded-lg p-8 text-center">
+        <h2 class="font-serif text-2xl text-bronze mb-3">{t("details.where")}</h2>
+        <p class="text-charcoal-light text-lg">{t("details.venue")}</p>
+      </div>
+
+      <!-- Dress code -->
+      <div class="bg-cream rounded-lg p-8 text-center sm:col-span-2">
+        <h2 class="font-serif text-2xl text-bronze mb-3">{t("details.dresscode")}</h2>
+        <p class="text-charcoal-light text-lg">{t("details.dresscode.desc")}</p>
+      </div>
+    </div>
+  </section>
+</Layout>

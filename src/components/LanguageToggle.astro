@@ -1,0 +1,16 @@
+---
+import { getLangFromUrl, getAlternateLanguagePath } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const alternatePath = getAlternateLanguagePath(Astro.url);
+const isHr = lang === "hr";
+---
+
+<a
+  href={alternatePath}
+  class="inline-flex items-center gap-1.5 text-sm tracking-wide text-charcoal-light hover:text-bronze transition-colors"
+>
+  <span class:list={[isHr ? "font-bold text-bronze" : ""]}>HR</span>
+  <span class="text-warm">|</span>
+  <span class:list={[!isHr ? "font-bold text-bronze" : ""]}>EN</span>
+</a>

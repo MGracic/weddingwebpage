@@ -1,0 +1,11 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ComingSoon from "../../components/ComingSoon.astro";
+import { useTranslations } from "../../i18n/utils";
+
+const t = useTranslations("en");
+---
+
+<Layout title={`${t("registry.title")} — Tea & Mak`}>
+  <ComingSoon sectionTitle={t("registry.title")} />
+</Layout>

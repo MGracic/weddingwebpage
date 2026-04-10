@@ -1,0 +1,86 @@
+---
+import { getLangFromUrl, useTranslations, getLocalizedPath } from "../i18n/utils";
+import { sections } from "../i18n/ui";
+import LanguageToggle from "./LanguageToggle.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const navItems = [
+  "home",
+  "our-story",
+  "details",
+  "rsvp",
+  "travel",
+  "registry",
+].filter((key) => sections[key]?.enabled);
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-ivory/90 backdrop-blur-sm border-b border-warm">
+  <nav class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href={getLocalizedPath("home", lang)} class="font-serif text-xl text-bronze hover:text-bronze-light transition-colors">
+      Tea & Mak
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden md:flex items-center gap-6">
+      {navItems.map((key) => (
+        <a
+          href={getLocalizedPath(key, lang)}
+          class="text-sm tracking-wide text-charcoal-light hover:text-bronze transition-colors uppercase"
+        >
+          {t(`nav.${key}`)}
+        </a>
+      ))}
+      <LanguageToggle />
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2"
+      aria-label="Menu"
+    >
+      <span class="block w-6 h-0.5 bg-charcoal transition-transform" id="bar1"></span>
+      <span class="block w-6 h-0.5 bg-charcoal transition-opacity" id="bar2"></span>
+      <span class="block w-6 h-0.5 bg-charcoal transition-transform" id="bar3"></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-ivory border-t border-warm">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col gap-3">
+      {navItems.map((key) => (
+        <a
+          href={getLocalizedPath(key, lang)}
+          class="text-sm tracking-wide text-charcoal-light hover:text-bronze transition-colors uppercase py-1"
+        >
+          {t(`nav.${key}`)}
+        </a>
+      ))}
+      <div class="pt-2 border-t border-warm">
+        <LanguageToggle />
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Spacer for fixed header -->
+<div class="h-14"></div>
+
+<script>
+  const btn = document.getElementById("mobile-menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  const bar1 = document.getElementById("bar1");
+  const bar2 = document.getElementById("bar2");
+  const bar3 = document.getElementById("bar3");
+
+  btn?.addEventListener("click", () => {
+    const open = menu?.classList.toggle("hidden") === false;
+    bar1?.classList.toggle("translate-y-[4px]", open);
+    bar1?.classList.toggle("rotate-45", open);
+    bar2?.classList.toggle("opacity-0", open);
+    bar3?.classList.toggle("-translate-y-[4px]", open);
+    bar3?.classList.toggle("-rotate-45", open);
+  });
+</script>

@@ -1,0 +1,211 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<form id="rsvp-form" class="max-w-lg mx-auto space-y-6">
+  <!-- Name -->
+  <div>
+    <label for="name" class="block text-sm font-medium text-charcoal mb-1">
+      {t("rsvp.name")} <span class="text-bronze">*</span>
+    </label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      required
+      placeholder={t("rsvp.name.placeholder")}
+      class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+    />
+  </div>
+
+  <!-- Attending -->
+  <fieldset>
+    <legend class="block text-sm font-medium text-charcoal mb-3">
+      {t("rsvp.attending")} <span class="text-bronze">*</span>
+    </legend>
+    <div class="flex gap-4">
+      <label class="flex-1 cursor-pointer">
+        <input type="radio" name="attending" value="yes" required class="peer sr-only" />
+        <div class="text-center py-3 px-4 border border-warm rounded-md peer-checked:border-sage-dark peer-checked:bg-sage/20 peer-checked:text-sage-dark transition-colors hover:border-sage">
+          {t("rsvp.attending.yes")}
+        </div>
+      </label>
+      <label class="flex-1 cursor-pointer">
+        <input type="radio" name="attending" value="no" required class="peer sr-only" />
+        <div class="text-center py-3 px-4 border border-warm rounded-md peer-checked:border-bronze peer-checked:bg-bronze/10 peer-checked:text-bronze transition-colors hover:border-bronze-light">
+          {t("rsvp.attending.no")}
+        </div>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- Conditional fields (shown when attending=yes) -->
+  <div id="attending-fields" class="hidden space-y-6">
+    <!-- Number of guests -->
+    <div>
+      <label for="guests" class="block text-sm font-medium text-charcoal mb-1">
+        {t("rsvp.guests")}
+      </label>
+      <input
+        type="number"
+        id="guests"
+        name="guests"
+        min="1"
+        max="10"
+        value="1"
+        class="w-24 px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+      />
+    </div>
+
+    <!-- Guest names (shown when guests > 1) -->
+    <div id="guest-names-field" class="hidden">
+      <label for="guest-names" class="block text-sm font-medium text-charcoal mb-1">
+        {t("rsvp.guest-names")}
+      </label>
+      <input
+        type="text"
+        id="guest-names"
+        name="guestNames"
+        placeholder={t("rsvp.guest-names.placeholder")}
+        class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+      />
+    </div>
+
+    <!-- Dietary -->
+    <div>
+      <label for="dietary" class="block text-sm font-medium text-charcoal mb-1">
+        {t("rsvp.dietary")}
+      </label>
+      <input
+        type="text"
+        id="dietary"
+        name="dietary"
+        placeholder={t("rsvp.dietary.placeholder")}
+        class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+      />
+    </div>
+
+    <!-- Song request -->
+    <div>
+      <label for="song" class="block text-sm font-medium text-charcoal mb-1">
+        {t("rsvp.song")}
+      </label>
+      <input
+        type="text"
+        id="song"
+        name="song"
+        placeholder={t("rsvp.song.placeholder")}
+        class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+      />
+    </div>
+  </div>
+
+  <!-- Message (always shown) -->
+  <div>
+    <label for="message" class="block text-sm font-medium text-charcoal mb-1">
+      {t("rsvp.message")}
+    </label>
+    <textarea
+      id="message"
+      name="message"
+      rows="3"
+      placeholder={t("rsvp.message.placeholder")}
+      class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors resize-none"
+    ></textarea>
+  </div>
+
+  <!-- Submit -->
+  <button
+    type="submit"
+    id="rsvp-submit"
+    class="w-full py-3 px-6 bg-bronze text-white rounded-md hover:bg-bronze-light transition-colors font-medium tracking-wide"
+  >
+    {t("rsvp.submit")}
+  </button>
+
+  <!-- Status messages -->
+  <p id="rsvp-success" class="hidden text-center text-sage-dark font-medium py-2">
+    {t("rsvp.success")}
+  </p>
+  <p id="rsvp-error" class="hidden text-center text-red-600 font-medium py-2">
+    {t("rsvp.error")}
+  </p>
+</form>
+
+<script>
+  // Progressive disclosure: show/hide fields based on attendance
+  const radios = document.querySelectorAll<HTMLInputElement>('input[name="attending"]');
+  const attendingFields = document.getElementById("attending-fields");
+
+  radios.forEach((radio) => {
+    radio.addEventListener("change", () => {
+      if (radio.value === "yes") {
+        attendingFields?.classList.remove("hidden");
+      } else {
+        attendingFields?.classList.add("hidden");
+      }
+    });
+  });
+
+  // Show guest names field when guests > 1
+  const guestsInput = document.getElementById("guests") as HTMLInputElement | null;
+  const guestNamesField = document.getElementById("guest-names-field");
+
+  guestsInput?.addEventListener("input", () => {
+    const count = parseInt(guestsInput.value, 10);
+    if (count > 1) {
+      guestNamesField?.classList.remove("hidden");
+    } else {
+      guestNamesField?.classList.add("hidden");
+    }
+  });
+
+  // Form submission
+  const form = document.getElementById("rsvp-form") as HTMLFormElement | null;
+  const submitBtn = document.getElementById("rsvp-submit") as HTMLButtonElement | null;
+  const successMsg = document.getElementById("rsvp-success");
+  const errorMsg = document.getElementById("rsvp-error");
+
+  // TODO: Replace with your Google Apps Script web app URL
+  const APPS_SCRIPT_URL = "";
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!submitBtn) return;
+
+    successMsg?.classList.add("hidden");
+    errorMsg?.classList.add("hidden");
+
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = submitBtn.dataset.sending ?? "...";
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      if (!APPS_SCRIPT_URL) {
+        // Demo mode — simulate success when no URL is configured
+        await new Promise((r) => setTimeout(r, 800));
+      } else {
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(data as Record<string, string>),
+        });
+      }
+      form.reset();
+      attendingFields?.classList.add("hidden");
+      successMsg?.classList.remove("hidden");
+    } catch {
+      errorMsg?.classList.remove("hidden");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
+</script>

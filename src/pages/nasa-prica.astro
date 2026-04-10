@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { useTranslations } from "../i18n/utils";
+
+const t = useTranslations("hr");
+---
+
+<Layout title={`${t("story.title")} — Tea i Mak`}>
+  <section class="max-w-3xl mx-auto px-4 py-24 text-center">
+    <h1 class="font-serif text-4xl sm:text-5xl text-charcoal mb-4">{t("story.title")}</h1>
+    <div class="w-16 h-px bg-bronze mx-auto mb-8"></div>
+    <p class="text-charcoal-light text-lg leading-relaxed">
+      {t("story.content")}
+    </p>
+  </section>
+</Layout>

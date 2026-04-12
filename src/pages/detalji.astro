@@ -23,6 +23,25 @@ const t = useTranslations("hr");
         <p class="text-charcoal-light text-lg">{t("details.venue")}</p>
       </div>
 
+      <!-- Schedule -->
+      <div class="bg-cream rounded-lg p-8 text-center sm:col-span-2">
+        <h2 class="font-serif text-2xl text-bronze mb-6">{t("details.schedule")}</h2>
+        <div class="flex flex-col sm:flex-row justify-center gap-6 sm:gap-12">
+          <div>
+            <p class="text-bronze font-medium text-lg">{t("details.gathering.time")}</p>
+            <p class="text-charcoal-light">{t("details.gathering")}</p>
+          </div>
+          <div>
+            <p class="text-bronze font-medium text-lg">{t("details.ceremony.time")}</p>
+            <p class="text-charcoal-light">{t("details.ceremony")}</p>
+          </div>
+          <div>
+            <p class="text-bronze font-medium text-lg">{t("details.reception.time")}</p>
+            <p class="text-charcoal-light">{t("details.reception")}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Dress code -->
       <div class="bg-cream rounded-lg p-8 text-center sm:col-span-2">
         <h2 class="font-serif text-2xl text-bronze mb-3">{t("details.dresscode")}</h2>

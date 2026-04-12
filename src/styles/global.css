@@ -4,15 +4,15 @@
   --font-serif: "Playfair Display", serif;
   --font-body: "Lora", serif;
 
-  --color-ivory: #FFFDF7;
-  --color-cream: #F5F0E8;
-  --color-warm: #E8E0D4;
-  --color-bronze: #8B7355;
-  --color-bronze-light: #A89070;
-  --color-sage: #A8B5A0;
-  --color-sage-dark: #7A8E6E;
+  --color-ivory: #F5F0E6;
+  --color-cream: #EBE5D9;
+  --color-warm: #D6CEBD;
+  --color-bronze: #2F4F2F;
+  --color-bronze-light: #3D6B3D;
+  --color-sage: #5A7F5A;
+  --color-sage-dark: #2A4A2A;
   --color-charcoal: #2C2C2C;
-  --color-charcoal-light: #555555;
+  --color-charcoal-light: #4A4A4A;
 }
 
 html {

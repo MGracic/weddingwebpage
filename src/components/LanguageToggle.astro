@@ -8,9 +8,24 @@ const isHr = lang === "hr";
 
 <a
   href={alternatePath}
-  class="inline-flex items-center gap-1.5 text-sm tracking-wide text-charcoal-light hover:text-bronze transition-colors"
+  class="inline-flex items-center gap-2 text-sm tracking-wide text-charcoal-light hover:text-bronze transition-colors"
 >
-  <span class:list={[isHr ? "font-bold text-bronze" : ""]}>HR</span>
+  <span class:list={["inline-flex items-center gap-1", isHr ? "font-bold text-bronze" : ""]}>
+    <svg class="w-4 h-3" viewBox="0 0 640 480" aria-hidden="true">
+      <path fill="#171796" d="M0 320h640v160H0z"/>
+      <path fill="#fff" d="M0 160h640v160H0z"/>
+      <path fill="#f00" d="M0 0h640v160H0z"/>
+      <path fill="#fff" d="M280 200l40-80 40 80-80-40h80z"/>
+    </svg>
+    HR
+  </span>
   <span class="text-warm">|</span>
-  <span class:list={[!isHr ? "font-bold text-bronze" : ""]}>EN</span>
+  <span class:list={["inline-flex items-center gap-1", !isHr ? "font-bold text-bronze" : ""]}>
+    <svg class="w-4 h-3" viewBox="0 0 640 480" aria-hidden="true">
+      <path fill="#bd3d44" d="M0 0h640v37h-640zm0 74h640v37h-640zm0 148h640v37h-640zm0 148h640v37h-640zm0-296h640v37h-640zm0 148h640v37h-640zm0 148h640v37h-640z"/>
+      <path fill="#fff" d="M0 37h640v37h-640zm0 148h640v37h-640zm0 148h640v37h-640zm0-296h640v37h-640zm0 148h640v37h-640zm0 148h640v37h-640z"/>
+      <path fill="#192f5d" d="M0 0h256v259H0z"/>
+    </svg>
+    EN
+  </span>
 </a>

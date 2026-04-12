@@ -50,7 +50,7 @@ export const ui: Record<Lang, Record<string, string>> = {
     "nav.registry": "Registar",
 
     // Home
-    "home.subtitle": "Vjenčamo se!",
+    "home.subtitle": "Ženimo se!",
     "home.date": "30. svibnja 2026.",
     "home.invite": "S radošću vas pozivamo da proslavite ovaj poseban dan s nama.",
     "home.cta": "Potvrdite dolazak",

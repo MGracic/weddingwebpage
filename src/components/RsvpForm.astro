@@ -5,7 +5,15 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<form id="rsvp-form" class="max-w-lg mx-auto space-y-6">
+<form id="rsvp-form" class="max-w-lg mx-auto space-y-6"
+  data-t-add-guest={t("rsvp.add-guest")}
+  data-t-remove={t("rsvp.remove-guest")}
+  data-t-additional={t("rsvp.additional-guest")}
+  data-t-guest-name={t("rsvp.guest-name")}
+  data-t-guest-name-ph={t("rsvp.guest-name.placeholder")}
+  data-t-guest-dietary-ph={t("rsvp.guest-dietary.placeholder")}
+  data-t-dietary={t("rsvp.dietary")}
+>
   <!-- Name -->
   <div>
     <label for="name" class="block text-sm font-medium text-charcoal mb-1">
@@ -44,37 +52,8 @@ const t = useTranslations(lang);
 
   <!-- Conditional fields (shown when attending=yes) -->
   <div id="attending-fields" class="hidden space-y-6">
-    <!-- Number of guests -->
-    <div>
-      <label for="guests" class="block text-sm font-medium text-charcoal mb-1">
-        {t("rsvp.guests")}
-      </label>
-      <input
-        type="number"
-        id="guests"
-        name="guests"
-        min="1"
-        max="10"
-        value="1"
-        class="w-24 px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
-      />
-    </div>
 
-    <!-- Guest names (shown when guests > 1) -->
-    <div id="guest-names-field" class="hidden">
-      <label for="guest-names" class="block text-sm font-medium text-charcoal mb-1">
-        {t("rsvp.guest-names")}
-      </label>
-      <input
-        type="text"
-        id="guest-names"
-        name="guestNames"
-        placeholder={t("rsvp.guest-names.placeholder")}
-        class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
-      />
-    </div>
-
-    <!-- Dietary -->
+    <!-- Primary guest dietary -->
     <div>
       <label for="dietary" class="block text-sm font-medium text-charcoal mb-1">
         {t("rsvp.dietary")}
@@ -87,6 +66,42 @@ const t = useTranslations(lang);
         class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
       />
     </div>
+
+    <!-- Additional guests container -->
+    <div id="guests-container" class="space-y-4"></div>
+
+    <!-- Add guest button -->
+    <button
+      type="button"
+      id="add-guest-btn"
+      class="w-full py-3 px-4 border-2 border-dashed border-warm rounded-md text-charcoal-light hover:border-bronze hover:text-bronze transition-colors flex items-center justify-center gap-2"
+    >
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {t("rsvp.add-guest")}
+    </button>
+
+    <!-- Accommodation -->
+    <fieldset>
+      <legend class="block text-sm font-medium text-charcoal mb-3">
+        {t("rsvp.accommodation")}
+      </legend>
+      <div class="flex gap-4">
+        <label class="flex-1 cursor-pointer">
+          <input type="radio" name="accommodation" value="yes" class="peer sr-only" />
+          <div class="text-center py-3 px-4 border border-warm rounded-md peer-checked:border-sage-dark peer-checked:bg-sage/20 peer-checked:text-sage-dark transition-colors hover:border-sage text-sm">
+            {t("rsvp.accommodation.yes")}
+          </div>
+        </label>
+        <label class="flex-1 cursor-pointer">
+          <input type="radio" name="accommodation" value="no" class="peer sr-only" />
+          <div class="text-center py-3 px-4 border border-warm rounded-md peer-checked:border-bronze peer-checked:bg-bronze/10 peer-checked:text-bronze transition-colors hover:border-bronze-light text-sm">
+            {t("rsvp.accommodation.no")}
+          </div>
+        </label>
+      </div>
+    </fieldset>
 
     <!-- Song request -->
     <div>
@@ -136,6 +151,19 @@ const t = useTranslations(lang);
 </form>
 
 <script>
+  const form = document.getElementById("rsvp-form") as HTMLFormElement | null;
+  if (!form) throw new Error("Form not found");
+
+  // Read translated strings from data attributes
+  const T = {
+    remove: form.dataset.tRemove ?? "Remove",
+    additional: form.dataset.tAdditional ?? "Additional guest",
+    guestName: form.dataset.tGuestName ?? "Full Name",
+    guestNamePh: form.dataset.tGuestNamePh ?? "Guest's full name",
+    guestDietaryPh: form.dataset.tGuestDietaryPh ?? "Dietary requirements (if any)",
+    dietary: form.dataset.tDietary ?? "Dietary Requirements",
+  };
+
   // Progressive disclosure: show/hide fields based on attendance
   const radios = document.querySelectorAll<HTMLInputElement>('input[name="attending"]');
   const attendingFields = document.getElementById("attending-fields");
@@ -150,21 +178,69 @@ const t = useTranslations(lang);
     });
   });
 
-  // Show guest names field when guests > 1
-  const guestsInput = document.getElementById("guests") as HTMLInputElement | null;
-  const guestNamesField = document.getElementById("guest-names-field");
+  // Dynamic guest management
+  const guestsContainer = document.getElementById("guests-container");
+  const addGuestBtn = document.getElementById("add-guest-btn");
+  let guestCount = 0;
 
-  guestsInput?.addEventListener("input", () => {
-    const count = parseInt(guestsInput.value, 10);
-    if (count > 1) {
-      guestNamesField?.classList.remove("hidden");
-    } else {
-      guestNamesField?.classList.add("hidden");
-    }
-  });
+  function addGuest() {
+    guestCount++;
+    const n = guestCount;
+
+    const card = document.createElement("div");
+    card.id = `guest-${n}`;
+    card.className = "bg-cream rounded-lg p-4 space-y-3 relative";
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-sm font-medium text-charcoal">${T.additional} #${n}</span>
+        <button type="button" class="remove-guest-btn text-xs text-charcoal-light hover:text-red-600 transition-colors" data-guest="${n}">
+          ${T.remove} &times;
+        </button>
+      </div>
+      <div>
+        <label for="guest-name-${n}" class="block text-xs text-charcoal-light mb-1">${T.guestName}</label>
+        <input
+          type="text"
+          id="guest-name-${n}"
+          name="guest_${n}_name"
+          placeholder="${T.guestNamePh}"
+          class="w-full px-3 py-2 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors text-sm"
+        />
+      </div>
+      <div>
+        <label for="guest-dietary-${n}" class="block text-xs text-charcoal-light mb-1">${T.dietary}</label>
+        <input
+          type="text"
+          id="guest-dietary-${n}"
+          name="guest_${n}_dietary"
+          placeholder="${T.guestDietaryPh}"
+          class="w-full px-3 py-2 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors text-sm"
+        />
+      </div>
+    `;
+
+    guestsContainer?.appendChild(card);
+
+    card.querySelector(".remove-guest-btn")?.addEventListener("click", () => {
+      card.remove();
+      renumberGuests();
+    });
+  }
+
+  function renumberGuests() {
+    const cards = guestsContainer?.querySelectorAll("[id^='guest-']") ?? [];
+    cards.forEach((card, i) => {
+      const num = i + 1;
+      const label = card.querySelector("span");
+      if (label) label.textContent = `${T.additional} #${num}`;
+    });
+    guestCount = cards.length;
+  }
+
+  addGuestBtn?.addEventListener("click", addGuest);
 
   // Form submission
-  const form = document.getElementById("rsvp-form") as HTMLFormElement | null;
   const submitBtn = document.getElementById("rsvp-submit") as HTMLButtonElement | null;
   const successMsg = document.getElementById("rsvp-success");
   const errorMsg = document.getElementById("rsvp-error");
@@ -172,7 +248,7 @@ const t = useTranslations(lang);
   // TODO: Replace with your Google Apps Script web app URL
   const APPS_SCRIPT_URL = "";
 
-  form?.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!submitBtn) return;
 
@@ -183,22 +259,44 @@ const t = useTranslations(lang);
     submitBtn.disabled = true;
     submitBtn.textContent = submitBtn.dataset.sending ?? "...";
 
+    // Collect form data including dynamic guest fields
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+
+    // Gather additional guests into a structured format
+    const guests: { name: string; dietary: string }[] = [];
+    const guestCards = guestsContainer?.querySelectorAll("[id^='guest-']") ?? [];
+    guestCards.forEach((_, i) => {
+      const name = (formData.get(`guest_${i + 1}_name`) as string) ?? "";
+      const dietary = (formData.get(`guest_${i + 1}_dietary`) as string) ?? "";
+      if (name.trim()) guests.push({ name, dietary });
+    });
+
+    // Build submission data
+    const data: Record<string, string> = {
+      name: (formData.get("name") as string) ?? "",
+      attending: (formData.get("attending") as string) ?? "",
+      dietary: (formData.get("dietary") as string) ?? "",
+      accommodation: (formData.get("accommodation") as string) ?? "",
+      song: (formData.get("song") as string) ?? "",
+      message: (formData.get("message") as string) ?? "",
+      guestCount: String(guests.length),
+      guests: JSON.stringify(guests),
+    };
 
     try {
       if (!APPS_SCRIPT_URL) {
-        // Demo mode — simulate success when no URL is configured
         await new Promise((r) => setTimeout(r, 800));
       } else {
         await fetch(APPS_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(data as Record<string, string>),
+          body: new URLSearchParams(data),
         });
       }
       form.reset();
+      guestsContainer!.innerHTML = "";
+      guestCount = 0;
       attendingFields?.classList.add("hidden");
       successMsg?.classList.remove("hidden");
     } catch {

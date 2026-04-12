@@ -80,6 +80,7 @@ export const ui: Record<Lang, Record<string, string>> = {
     "details.reception.time": "19:00 h",
     "details.dresscode": "Dress code",
     "details.dresscode.desc": "Svečano odijevanje",
+    "details.playlist": "Naša playlista",
 
     // RSVP
     "rsvp.title": "Potvrdite dolazak",
@@ -174,6 +175,7 @@ export const ui: Record<Lang, Record<string, string>> = {
     "details.reception.time": "7:00 PM",
     "details.dresscode": "Dress Code",
     "details.dresscode.desc": "Formal attire",
+    "details.playlist": "Our Playlist",
 
     // RSVP
     "rsvp.title": "RSVP",

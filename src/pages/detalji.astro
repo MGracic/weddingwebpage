@@ -47,6 +47,21 @@ const t = useTranslations("hr");
         <h2 class="font-serif text-2xl text-bronze mb-3">{t("details.dresscode")}</h2>
         <p class="text-charcoal-light text-lg">{t("details.dresscode.desc")}</p>
       </div>
+
+      <!-- Spotify playlist -->
+      <div class="bg-cream rounded-lg p-8 text-center sm:col-span-2">
+        <h2 class="font-serif text-2xl text-bronze mb-6">{t("details.playlist")}</h2>
+        <iframe
+          style="border-radius:12px"
+          src="https://open.spotify.com/embed/playlist/2TeWrDJ2pKTTNO11xaBQin?utm_source=generator&theme=0"
+          width="100%"
+          height="352"
+          frameborder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
     </div>
   </section>
 </Layout>

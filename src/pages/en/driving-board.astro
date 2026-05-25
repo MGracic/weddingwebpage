@@ -1,0 +1,16 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import DrivingBoard from "../../components/DrivingBoard.astro";
+import { useTranslations } from "../../i18n/utils";
+
+const t = useTranslations("en");
+---
+
+<Layout title={`${t("driving.title")} — Tea & Mak`}>
+  <section class="max-w-3xl mx-auto px-4 py-24">
+    <h1 class="font-serif text-4xl sm:text-5xl text-charcoal mb-4 text-center">{t("driving.title")}</h1>
+    <div class="w-16 h-px bg-bronze mx-auto mb-4"></div>
+    <p class="text-center text-charcoal-light mb-12">{t("driving.description")}</p>
+    <DrivingBoard />
+  </section>
+</Layout>

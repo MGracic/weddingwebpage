@@ -6,11 +6,16 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "dev:pages": "astro build && wrangler pages dev dist --kv RIDES_KV --binding ADMIN_TOKEN=local-admin-token --port 8788 --ip 127.0.0.1"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.5",
     "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "wrangler": "^4.93.1"
   }
 }

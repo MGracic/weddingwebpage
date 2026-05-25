@@ -1,0 +1,573 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div class="space-y-12">
+  <!-- Admin badge (hidden unless localStorage.drivingAdminToken is set) -->
+  <div
+    id="driving-admin-bar"
+    class="hidden flex items-center justify-between gap-3 bg-bronze/10 border border-bronze/30 text-bronze-light rounded-md px-4 py-2 text-sm"
+  >
+    <span class="font-medium">{t("driving.admin.badge")}</span>
+    <button
+      type="button"
+      id="driving-admin-exit"
+      class="text-xs underline hover:text-bronze transition-colors"
+    >
+      {t("driving.admin.exit")}
+    </button>
+  </div>
+
+  <!-- Taxi / shuttle block -->
+  <section>
+    <h2 class="font-serif text-2xl text-charcoal mb-4">{t("driving.taxi.title")}</h2>
+    <div class="bg-cream rounded-lg p-5 space-y-3">
+      <p class="text-charcoal-light leading-relaxed">{t("driving.taxi.description")}</p>
+      <p class="text-charcoal-light leading-relaxed">{t("driving.taxi.return")}</p>
+    </div>
+  </section>
+
+  <!-- Rider CTA -->
+  <section class="bg-cream/50 border border-warm rounded-md p-5">
+    <h2 class="font-serif text-xl text-charcoal mb-2">{t("driving.rider-cta.title")}</h2>
+    <p class="text-charcoal-light">{t("driving.rider-cta.body")}</p>
+  </section>
+
+  <!-- Driver form -->
+  <section>
+    <h2 id="driving-form-heading" class="font-serif text-2xl text-charcoal mb-2">{t("driving.form.title")}</h2>
+    <p id="driving-form-description" class="text-sm text-charcoal-light mb-6">{t("driving.form.description")}</p>
+
+    <!-- Edit-mode banner -->
+    <div
+      id="driving-edit-banner"
+      class="hidden bg-bronze/10 border border-bronze/30 rounded-md px-4 py-2 text-sm text-bronze-light mb-4"
+    >
+      {t("driving.admin.editing")}
+    </div>
+
+    <form
+      id="driving-form"
+      class="space-y-4"
+      data-t-list-loading={t("driving.list.loading")}
+      data-t-list-empty={t("driving.list.empty")}
+      data-t-list-error={t("driving.form.error")}
+      data-t-seats-label={t("driving.list.seats-label")}
+      data-t-area-label={t("driving.list.area-label")}
+      data-t-time-label={t("driving.list.time-label")}
+      data-t-sending={t("driving.form.sending")}
+      data-t-saving={t("driving.form.saving")}
+      data-t-submit={t("driving.form.submit")}
+      data-t-save={t("driving.form.save")}
+      data-t-success={t("driving.form.success")}
+      data-t-update-success={t("driving.form.update-success")}
+      data-t-admin-delete={t("driving.admin.delete")}
+      data-t-admin-edit={t("driving.admin.edit")}
+      data-t-confirm-delete={t("driving.admin.confirm-delete")}
+    >
+      <div>
+        <label for="driving-name" class="block text-sm font-medium text-charcoal mb-1">
+          {t("driving.form.name")} <span class="text-bronze">*</span>
+        </label>
+        <input
+          type="text"
+          id="driving-name"
+          name="name"
+          required
+          placeholder={t("driving.form.name.placeholder")}
+          class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+        />
+      </div>
+
+      <div>
+        <label for="driving-seats" class="block text-sm font-medium text-charcoal mb-1">
+          {t("driving.form.seats")} <span class="text-bronze">*</span>
+        </label>
+        <input
+          type="number"
+          id="driving-seats"
+          name="seats"
+          required
+          min="1"
+          max="8"
+          placeholder={t("driving.form.seats.placeholder")}
+          class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+        />
+      </div>
+
+      <div>
+        <label for="driving-area" class="block text-sm font-medium text-charcoal mb-1">
+          {t("driving.form.area")}
+        </label>
+        <input
+          type="text"
+          id="driving-area"
+          name="area"
+          placeholder={t("driving.form.area.placeholder")}
+          class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+        />
+      </div>
+
+      <div>
+        <label for="driving-time" class="block text-sm font-medium text-charcoal mb-1">
+          {t("driving.form.time")}
+        </label>
+        <input
+          type="text"
+          id="driving-time"
+          name="time"
+          placeholder={t("driving.form.time.placeholder")}
+          class="w-full px-4 py-3 bg-white border border-warm rounded-md focus:outline-none focus:ring-2 focus:ring-bronze/30 focus:border-bronze transition-colors"
+        />
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          type="submit"
+          id="driving-submit"
+          class="flex-1 py-3 px-6 bg-bronze text-white rounded-md hover:bg-bronze-light transition-colors font-medium tracking-wide"
+        >
+          {t("driving.form.submit")}
+        </button>
+        <button
+          type="button"
+          id="driving-cancel-edit"
+          class="hidden py-3 px-6 border border-warm text-charcoal-light rounded-md hover:border-bronze hover:text-bronze transition-colors font-medium tracking-wide"
+        >
+          {t("driving.form.cancel-edit")}
+        </button>
+      </div>
+
+      <p id="driving-success" class="hidden text-center text-sage-dark font-medium py-2">
+        {t("driving.form.success")}
+      </p>
+      <p id="driving-error" class="hidden text-center text-red-600 font-medium py-2">
+        {t("driving.form.error")}
+      </p>
+    </form>
+  </section>
+
+  <!-- Rides list -->
+  <section>
+    <h2 class="font-serif text-2xl text-charcoal mb-4">{t("driving.list.title")}</h2>
+    <div id="rides-list" class="space-y-3"></div>
+  </section>
+</div>
+
+<script>
+  // Backend: Cloudflare Pages Function at /api/rides (functions/api/rides.ts).
+  // localStorage is a cache for instant paint on refresh and graceful fallback
+  // during local `npm run dev` (which doesn't run Pages Functions).
+  const RIDES_STORAGE_KEY = "drivingRides";
+  const RIDES_API_URL = "/api/rides";
+
+  // Admin: enable by visiting `/voznja?admin=<your-secret-token>` once per browser.
+  // The token is persisted to localStorage and sent with every admin operation;
+  // the Apps Script verifies it against its own Script Property.
+  const ADMIN_STORAGE_KEY = "drivingAdminToken";
+
+  const form = document.getElementById("driving-form") as HTMLFormElement | null;
+  const list = document.getElementById("rides-list");
+  const adminBar = document.getElementById("driving-admin-bar");
+  const adminExitBtn = document.getElementById("driving-admin-exit");
+  const editBanner = document.getElementById("driving-edit-banner");
+  const cancelEditBtn = document.getElementById("driving-cancel-edit");
+  if (!form || !list) throw new Error("Driving board elements missing");
+
+  const T = {
+    loading: form.dataset.tListLoading ?? "Loading...",
+    empty: form.dataset.tListEmpty ?? "No offers yet.",
+    error: form.dataset.tListError ?? "Something went wrong.",
+    seatsLabel: form.dataset.tSeatsLabel ?? "seats",
+    areaLabel: form.dataset.tAreaLabel ?? "From",
+    timeLabel: form.dataset.tTimeLabel ?? "Time",
+    sending: form.dataset.tSending ?? "...",
+    saving: form.dataset.tSaving ?? "...",
+    submit: form.dataset.tSubmit ?? "Post",
+    save: form.dataset.tSave ?? "Save",
+    success: form.dataset.tSuccess ?? "Posted.",
+    updateSuccess: form.dataset.tUpdateSuccess ?? "Saved.",
+    adminDelete: form.dataset.tAdminDelete ?? "Delete",
+    adminEdit: form.dataset.tAdminEdit ?? "Edit",
+    confirmDelete: form.dataset.tConfirmDelete ?? "Delete this listing?",
+  };
+
+  type Ride = {
+    id: string;
+    name: string;
+    seats: number | string;
+    area?: string;
+    time?: string;
+    timestamp?: string;
+  };
+
+  // --- Admin token management ---
+
+  function getAdminToken(): string {
+    try {
+      return localStorage.getItem(ADMIN_STORAGE_KEY) ?? "";
+    } catch {
+      return "";
+    }
+  }
+
+  function setAdminToken(token: string) {
+    try {
+      if (token) localStorage.setItem(ADMIN_STORAGE_KEY, token);
+      else localStorage.removeItem(ADMIN_STORAGE_KEY);
+    } catch {
+      // ignore (private mode, etc.)
+    }
+  }
+
+  function isAdmin(): boolean {
+    return Boolean(getAdminToken());
+  }
+
+  // Capture ?admin=<token> from URL, persist, then strip it from the address bar.
+  (function captureAdminParam() {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("admin")) {
+      const token = url.searchParams.get("admin") ?? "";
+      setAdminToken(token);
+      url.searchParams.delete("admin");
+      window.history.replaceState({}, "", url.pathname + (url.search || "") + url.hash);
+    }
+  })();
+
+  function refreshAdminUi() {
+    if (!adminBar) return;
+    if (isAdmin()) adminBar.classList.remove("hidden");
+    else adminBar.classList.add("hidden");
+  }
+
+  adminExitBtn?.addEventListener("click", () => {
+    setAdminToken("");
+    refreshAdminUi();
+    // Re-render the current list without admin controls.
+    renderRides(getStoredRides());
+  });
+
+  // --- Local storage (primary persistence) ---
+
+  function getStoredRides(): Ride[] {
+    try {
+      const raw = localStorage.getItem(RIDES_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function setStoredRides(rides: Ride[]) {
+    try {
+      localStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(rides));
+    } catch {
+      // ignore (private mode / quota)
+    }
+  }
+
+  function addStoredRide(ride: Ride) {
+    const rides = getStoredRides();
+    // Newest first; dedupe by id.
+    const filtered = rides.filter((r) => r.id !== ride.id);
+    setStoredRides([ride, ...filtered]);
+  }
+
+  function removeStoredRide(id: string) {
+    setStoredRides(getStoredRides().filter((r) => r.id !== id));
+  }
+
+  function updateStoredRide(ride: Ride) {
+    setStoredRides(
+      getStoredRides().map((r) => (r.id === ride.id ? { ...r, ...ride } : r)),
+    );
+  }
+
+  // --- Rendering ---
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function rideCardHtml(ride: Ride): string {
+    const id = escapeHtml(String(ride.id ?? ""));
+    const name = escapeHtml(String(ride.name ?? ""));
+    const seats = escapeHtml(String(ride.seats ?? ""));
+    const area = ride.area ? escapeHtml(String(ride.area)) : "";
+    const time = ride.time ? escapeHtml(String(ride.time)) : "";
+
+    const adminControls = isAdmin()
+      ? `
+        <div class="flex gap-3 mt-3 pt-3 border-t border-warm/50 text-xs">
+          <button type="button" class="ride-edit-btn text-charcoal-light hover:text-bronze transition-colors" data-ride-id="${id}">
+            ${escapeHtml(T.adminEdit)}
+          </button>
+          <button type="button" class="ride-delete-btn text-charcoal-light hover:text-red-600 transition-colors" data-ride-id="${id}">
+            ${escapeHtml(T.adminDelete)}
+          </button>
+        </div>
+      `
+      : "";
+
+    return `
+      <article class="bg-cream rounded-lg p-4" data-ride-id="${id}" data-ride-name="${name}" data-ride-seats="${seats}" data-ride-area="${area}" data-ride-time="${time}">
+        <div class="flex items-center justify-between mb-1">
+          <div class="font-medium text-charcoal">${name}</div>
+          <div class="text-bronze text-sm"><span class="font-medium">${seats}</span> ${escapeHtml(T.seatsLabel)}</div>
+        </div>
+        ${area ? `<div class="text-sm text-charcoal-light"><span class="text-charcoal">${escapeHtml(T.areaLabel)}:</span> ${area}</div>` : ""}
+        ${time ? `<div class="text-sm text-charcoal-light"><span class="text-charcoal">${escapeHtml(T.timeLabel)}:</span> ${time}</div>` : ""}
+        ${adminControls}
+      </article>
+    `;
+  }
+
+  function readRideFromCard(card: Element): Ride {
+    const el = card as HTMLElement;
+    return {
+      id: el.dataset.rideId ?? "",
+      name: el.dataset.rideName ?? "",
+      seats: el.dataset.rideSeats ?? "",
+      area: el.dataset.rideArea ?? "",
+      time: el.dataset.rideTime ?? "",
+    };
+  }
+
+  function renderRides(rides: Ride[]) {
+    if (!list) return;
+    if (!rides.length) {
+      list.innerHTML = `<p class="text-center text-charcoal-light py-4">${escapeHtml(T.empty)}</p>`;
+      return;
+    }
+    list.innerHTML = rides.map(rideCardHtml).join("");
+  }
+
+  function renderLoading() {
+    if (!list) return;
+    list.innerHTML = `<p class="text-center text-charcoal-light py-4">${escapeHtml(T.loading)}</p>`;
+  }
+
+  function renderError() {
+    if (!list) return;
+    list.innerHTML = `<p class="text-center text-red-600 py-4">${escapeHtml(T.error)}</p>`;
+  }
+
+  function listIsEmptyOrPlaceholder(): boolean {
+    if (!list) return true;
+    if (!list.children.length) return true;
+    return !list.querySelector("article");
+  }
+
+  async function loadRides({ allowOverwrite }: { allowOverwrite: boolean }) {
+    try {
+      const res = await fetch(RIDES_API_URL, { headers: { Accept: "application/json" } });
+      const ct = res.headers.get("Content-Type") || "";
+      if (!res.ok || !ct.includes("application/json")) throw new Error("bad response");
+      const data = await res.json();
+      const rides: Ride[] = Array.isArray(data?.rides) ? data.rides : [];
+      // Mirror server truth into the local cache.
+      setStoredRides(rides);
+      renderRides(rides);
+    } catch {
+      // Backend unreachable (e.g. local `npm run dev` doesn't run Pages Functions).
+      // Fall back to the cache rather than wiping the UI.
+      if (allowOverwrite) renderRides(getStoredRides());
+    }
+  }
+
+  refreshAdminUi();
+  // Show the cached rides immediately so the UI never feels empty on refresh.
+  renderRides(getStoredRides());
+  loadRides({ allowOverwrite: true });
+
+  // --- Form state ---
+
+  const submitBtn = document.getElementById("driving-submit") as HTMLButtonElement | null;
+  const successMsg = document.getElementById("driving-success");
+  const errorMsg = document.getElementById("driving-error");
+  const nameInput = document.getElementById("driving-name") as HTMLInputElement | null;
+  const seatsInput = document.getElementById("driving-seats") as HTMLInputElement | null;
+  const areaInput = document.getElementById("driving-area") as HTMLInputElement | null;
+  const timeInput = document.getElementById("driving-time") as HTMLInputElement | null;
+
+  // Tracks the ride id currently being edited. Empty string = add mode.
+  let editingId = "";
+
+  function enterEditMode(ride: Ride) {
+    editingId = String(ride.id ?? "");
+    if (nameInput) nameInput.value = String(ride.name ?? "");
+    if (seatsInput) seatsInput.value = String(ride.seats ?? "");
+    if (areaInput) areaInput.value = String(ride.area ?? "");
+    if (timeInput) timeInput.value = String(ride.time ?? "");
+    if (submitBtn) submitBtn.textContent = T.save;
+    cancelEditBtn?.classList.remove("hidden");
+    editBanner?.classList.remove("hidden");
+    successMsg?.classList.add("hidden");
+    errorMsg?.classList.add("hidden");
+    form?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function exitEditMode() {
+    editingId = "";
+    form?.reset();
+    if (submitBtn) submitBtn.textContent = T.submit;
+    cancelEditBtn?.classList.add("hidden");
+    editBanner?.classList.add("hidden");
+  }
+
+  cancelEditBtn?.addEventListener("click", () => {
+    exitEditMode();
+  });
+
+  // --- Delete and edit handlers (delegated) ---
+
+  list.addEventListener("click", async (e) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+
+    const deleteBtn = target.closest<HTMLElement>(".ride-delete-btn");
+    if (deleteBtn) {
+      if (!isAdmin()) return;
+      const id = deleteBtn.dataset.rideId ?? "";
+      if (!id) return;
+      if (!window.confirm(T.confirmDelete)) return;
+      await deleteRide(id);
+      return;
+    }
+
+    const editBtn = target.closest<HTMLElement>(".ride-edit-btn");
+    if (editBtn) {
+      if (!isAdmin()) return;
+      const card = editBtn.closest("article");
+      if (!card) return;
+      enterEditMode(readRideFromCard(card));
+      return;
+    }
+  });
+
+  async function deleteRide(id: string) {
+    const card = list?.querySelector<HTMLElement>(`article[data-ride-id="${CSS.escape(id)}"]`);
+    if (editingId === id) exitEditMode();
+    // Optimistic remove from UI + persistent store.
+    card?.remove();
+    removeStoredRide(id);
+    if (listIsEmptyOrPlaceholder()) renderRides([]);
+
+    const body = new URLSearchParams({
+      action: "delete",
+      id,
+      adminToken: getAdminToken(),
+    });
+    try {
+      const res = await fetch(RIDES_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+      });
+      if (!res.ok && errorMsg) {
+        errorMsg.classList.remove("hidden");
+      }
+    } catch {
+      // Network failure (likely dev mode without Pages Functions running);
+      // localStorage already reflects the delete locally.
+    }
+    // Reconcile from the server so its truth wins.
+    setTimeout(() => loadRides({ allowOverwrite: false }), 800);
+  }
+
+  // --- Submit (add or update) ---
+
+  function newRideId(): string {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+    return `ride-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!submitBtn) return;
+
+    successMsg?.classList.add("hidden");
+    errorMsg?.classList.add("hidden");
+
+    const isEditing = Boolean(editingId);
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = isEditing ? T.saving : T.sending;
+
+    const formData = new FormData(form);
+    const ride: Ride = {
+      id: isEditing ? editingId : newRideId(),
+      name: (formData.get("name") as string)?.trim() ?? "",
+      seats: (formData.get("seats") as string) ?? "",
+      area: ((formData.get("area") as string) ?? "").trim(),
+      time: ((formData.get("time") as string) ?? "").trim(),
+    };
+
+    const body = new URLSearchParams({
+      action: isEditing ? "update" : "add",
+      id: String(ride.id),
+      name: String(ride.name),
+      seats: String(ride.seats),
+      area: ride.area ?? "",
+      time: ride.time ?? "",
+    });
+    if (isEditing) body.set("adminToken", getAdminToken());
+
+    // Optimistic UI + cache update happens first so the page always feels instant,
+    // even when the API call fails (e.g. running on localhost without Pages Functions).
+    if (isEditing) {
+      updateStoredRide(ride);
+      const existing = list?.querySelector<HTMLElement>(`article[data-ride-id="${CSS.escape(String(ride.id))}"]`);
+      if (existing) existing.outerHTML = rideCardHtml(ride);
+      exitEditMode();
+      if (successMsg) successMsg.textContent = T.updateSuccess;
+      successMsg?.classList.remove("hidden");
+    } else {
+      addStoredRide({ ...ride, timestamp: new Date().toISOString() });
+      if (list) {
+        const emptyP = list.querySelector("p");
+        if (emptyP) list.innerHTML = "";
+        list.insertAdjacentHTML("afterbegin", rideCardHtml(ride));
+      }
+      form.reset();
+      if (successMsg) successMsg.textContent = T.success;
+      successMsg?.classList.remove("hidden");
+    }
+
+    let apiError = false;
+    try {
+      const res = await fetch(RIDES_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+      });
+      if (!res.ok) apiError = true;
+    } catch {
+      // Network failure — fine in dev, cache has the data.
+    }
+
+    if (apiError && errorMsg) {
+      errorMsg.classList.remove("hidden");
+      successMsg?.classList.add("hidden");
+    }
+
+    // Reconcile so the server's truth wins; restore the cache from server.
+    setTimeout(() => loadRides({ allowOverwrite: false }), 800);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = editingId ? T.save : (originalText ?? T.submit);
+  });
+</script>

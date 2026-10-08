@@ -14,6 +14,7 @@ export const routes: Record<Lang, Record<string, string>> = {
     details: "/detalji",
     rsvp: "/rsvp",
     "driving-board": "/voznja",
+    gallery: "/galerija",
     travel: "/putovanje",
     registry: "/registar",
   },
@@ -23,6 +24,7 @@ export const routes: Record<Lang, Record<string, string>> = {
     details: "/en/details",
     rsvp: "/en/rsvp",
     "driving-board": "/en/driving-board",
+    gallery: "/en/gallery",
     travel: "/en/travel",
     registry: "/en/registry",
   },
@@ -34,6 +36,7 @@ export const sections: Record<string, { enabled: boolean }> = {
   details: { enabled: true },
   rsvp: { enabled: true },
   "driving-board": { enabled: true },
+  gallery: { enabled: true },
   travel: { enabled: false },
   registry: { enabled: false },
 };
@@ -50,6 +53,7 @@ export const ui: Record<Lang, Record<string, string>> = {
     "nav.details": "Detalji",
     "nav.rsvp": "RSVP",
     "nav.driving-board": "Vožnja",
+    "nav.gallery": "Galerija",
     "nav.travel": "Putovanje",
     "nav.registry": "Registar",
 
@@ -189,6 +193,7 @@ export const ui: Record<Lang, Record<string, string>> = {
     "nav.details": "Details",
     "nav.rsvp": "RSVP",
     "nav.driving-board": "Driving Board",
+    "nav.gallery": "Gallery",
     "nav.travel": "Travel",
     "nav.registry": "Registry",
 
